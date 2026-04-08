@@ -1,21 +1,5 @@
 import React from "react";
 
-const roles = [
-  {
-    id: "police",
-    title: "Police Officer",
-    icon: "bx-shield-quarter",
-    description: "Case tracking & evidence management",
-    color: "#3b82f6",
-    bg: "rgba(59,130,246,0.1)",
-    border: "rgba(59,130,246,0.2)",
-  },
-  { id: "forensic", title: "Forensic Officer", icon: "bx-file-find", description: "Analyze & verify digital evidence", color: "#f59e0b", bg: "rgba(245,158,11,0.1)", border: "rgba(245,158,11,0.2)" },
-  { id: "admin", title: "Administrator", icon: "bx-user-check", description: "Manage users & system settings", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)", border: "rgba(139,92,246,0.2)" },
-  { id: "lead", title: "Lead Investigator", icon: "bx-search-alt", description: "Lead investigations & team oversight", color: "#10b981", bg: "rgba(16,185,129,0.1)", border: "rgba(16,185,129,0.2)" },
-];
-
-// Particles for background
 function Particles() {
   return (
     <>
@@ -23,7 +7,13 @@ function Particles() {
         <div
           key={i}
           className="particle"
-          style={{ left: `${10 + i * 12}%`, animationDuration: `${8 + i * 2}s`, animationDelay: `${i * 1.2}s`, width: i % 2 === 0 ? "4px" : "3px", height: i % 2 === 0 ? "4px" : "3px" }}
+          style={{
+            left: `${10 + i * 12}%`,
+            animationDuration: `${8 + i * 2}s`,
+            animationDelay: `${i * 1.2}s`,
+            width: i % 2 === 0 ? "4px" : "3px",
+            height: i % 2 === 0 ? "4px" : "3px",
+          }}
         />
       ))}
     </>
@@ -89,28 +79,43 @@ function RoleSelection({ onRoleSelect }) {
       <div className="right">
         <div className="formContainer">
           <div className="roleSelectHeader">
-            <div className="roleSelectBadge">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                <circle cx="6" cy="6" r="3" />
-                <circle cx="6" cy="6" r="6" opacity="0.2" />
-              </svg>
-              SECURE PORTAL
-            </div>
+            <div className="roleSelectBadge">SECURE PORTAL</div>
             <h2 className="roleSelectTitle">Select Your Role</h2>
             <p className="roleSelectSubtitle">Choose your role to access LegalLens</p>
           </div>
 
           <div className="rolesGrid">
-            {roles.map((role) => (
-              <div key={role.id} className="roleCard" onClick={() => onRoleSelect(role.id)}>
-                <div className="roleCardShine" />
-                <div className="roleIcon" style={{ background: role.bg, border: `1px solid ${role.border}` }}>
-                  <i className={`bx ${role.icon}`} style={{ fontSize: "1.6rem", color: role.color }} />
-                </div>
-                <h3>{role.title}</h3>
-                <p>{role.description}</p>
+            <div className="roleCard" onClick={() => onRoleSelect("police")}>
+              <div className="roleIcon policeIcon">
+                <i className="bx bx-shield-quarter" />
               </div>
-            ))}
+              <h3>Police Officer</h3>
+              <p>Case tracking & evidence management</p>
+            </div>
+
+            <div className="roleCard" onClick={() => onRoleSelect("forensic")}>
+              <div className="roleIcon forensicIcon">
+                <i className="bx bx-file-find" />
+              </div>
+              <h3>Forensic Officer</h3>
+              <p>Analyze & verify digital evidence</p>
+            </div>
+
+            <div className="roleCard" onClick={() => onRoleSelect("admin")}>
+              <div className="roleIcon adminIcon">
+                <i className="bx bx-user-check" />
+              </div>
+              <h3>Administrator</h3>
+              <p>Manage users & system settings</p>
+            </div>
+
+            <div className="roleCard" onClick={() => onRoleSelect("lead")}>
+              <div className="roleIcon leadIcon">
+                <i className="bx bx-search-alt" />
+              </div>
+              <h3>Lead Investigator</h3>
+              <p>Lead investigations & team oversight</p>
+            </div>
           </div>
 
           <footer className="formFooter">

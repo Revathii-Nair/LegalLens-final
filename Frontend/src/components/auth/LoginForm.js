@@ -6,23 +6,21 @@ import { LeftPanel } from "./RoleSelection.js";
 function LoginForm({ role, onBack }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
-  const [popup, setPopup] = useState(null);
   const navigate = useNavigate();
 
+  const titles = {
+    police: "Police Officer",
+    forensic: "Forensic Officer",
+    admin: "Administrator",
+    lead: "Lead Investigator",
+  };
+
   const getRoleTitle = () => {
-    const titles = { police: "Police Officer", forensic: "Forensic Officer", admin: "Administrator", lead: "Lead Investigator" };
     return titles[role] || "User";
   };
 
-  const getRoleColor = () => {
-    const colors = { police: "#3b82f6", forensic: "#f59e0b", admin: "#8b5cf6", lead: "#10b981" };
-    return colors[role] || "#4f46e5";
-  };
-
-  // Login — uses api instance so baseURL is applied automatically
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -40,7 +38,6 @@ function LoginForm({ role, onBack }) {
     }
   };
 
-  // Forgot password — sends a reset request to admin via backend
   const handleForgotPassword = async () => {
     if (!email) {
       setError("Please enter your email address first");
@@ -50,11 +47,9 @@ function LoginForm({ role, onBack }) {
     setError("");
     try {
       const res = await api.post("/password-reset-request-public", { email });
-      setPopup({ message: res.data.message || "Your password has been reset to pass123. Please sign in and change it from Settings." });
-      setTimeout(() => setPopup(null), 7000);
+      setError(res.data.message || " Please sign in and change it from Settings.");
     } catch (err) {
-      setPopup({ message: err.response?.data?.message || "Unable to reset password right now." });
-      setTimeout(() => setPopup(null), 7000);
+      setError(err.response?.data?.message || "Unable to reset password right now.");
     } finally {
       setSending(false);
     }
@@ -72,7 +67,7 @@ function LoginForm({ role, onBack }) {
           <header className="formHeader">
             <h2>Welcome Back</h2>
             <p>
-              Sign in as <strong style={{ color: getRoleColor() }}>{getRoleTitle()}</strong>
+              Sign in as <strong style={{ color: "#4f46e5" }}>{getRoleTitle()}</strong>
             </p>
           </header>
 
@@ -96,8 +91,8 @@ function LoginForm({ role, onBack }) {
             <div className="inputGroup">
               <label>Password</label>
               <div className="inputWrapper">
-                <input type={showPassword ? "text" : "password"} placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <i className={showPassword ? "bx bx-eye" : "bx bx-eye-closed"} onClick={() => setShowPassword(!showPassword)} style={{ cursor: "pointer" }}></i>
+                <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <i className="bx bx-lock"></i>
               </div>
             </div>
 
@@ -105,21 +100,7 @@ function LoginForm({ role, onBack }) {
 
             <div className="formUtils">
               <div></div>
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                disabled={sending}
-                style={{
-                  background: "none",
-                  border: "none",
-                  color: "#818cf8",
-                  cursor: sending ? "not-allowed" : "pointer",
-                  opacity: sending ? 0.6 : 1,
-                  fontSize: "0.85rem",
-                  padding: 0,
-                  textDecoration: "underline",
-                }}
-              >
+              <button type="button" onClick={handleForgotPassword} disabled={sending} className="forgotPasswordBtn">
                 {sending ? "Sending..." : "Forgot password?"}
               </button>
             </div>
@@ -129,14 +110,6 @@ function LoginForm({ role, onBack }) {
             </button>
           </form>
         </div>
-
-        {/* Success popup for forgot password */}
-        {popup && (
-          <div className="adminRequestPopup">
-            <h4>✓ Request Sent</h4>
-            <p>{popup.message}</p>
-          </div>
-        )}
       </div>
     </>
   );

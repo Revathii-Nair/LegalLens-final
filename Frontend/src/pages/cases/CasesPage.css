@@ -14,3 +14,100 @@
   flex-direction: column;
   gap: 0.5rem; /* space-y-2 */
 }
+.casesPageContainer {
+  padding: 1.5rem;
+  color: white;
+}
+
+.casesPageTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.casesListWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.casesHeaderBtn {
+  width: auto;
+  padding: 0.75rem 1.5rem;
+}
+
+.casesFilterTabs {
+  margin-bottom: 1.5rem;
+}
+
+.casesFilterBar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+}
+
+.casesSearchContainer {
+  flex: 1;
+  max-width: 420px;
+}
+
+.casesSearchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.875rem;
+  flex: 1;
+}
+
+.casesSearchClearBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+}
+
+.casesPrioritySelect {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.casesResultCount {
+  margin-left: auto;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.casesMessageState {
+  text-align: center;
+  padding: 3rem;
+  color: #475569;
+}
+
+.casesErrorState {
+  text-align: center;
+  padding: 3rem;
+  color: #f87171;
+}
+
+.casesSpinner {
+  margin: 0 auto 0.75rem;
+}
+
+.casesRetryBtn {
+  margin-top: 1rem;
+  width: auto;
+  padding: 0.5rem 1.5rem;
+}
+
+.casesEmptyCreateBtn {
+  width: auto;
+  margin-top: 1rem;
+}

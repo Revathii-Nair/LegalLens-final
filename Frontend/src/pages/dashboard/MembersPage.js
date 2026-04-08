@@ -1,5 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { UserPlus, Trash2, KeyRound, Search, X, CheckCircle, AlertCircle, UserMinus, FolderOpen, MoreVertical } from "lucide-react";
+import {
+  UserPlus,
+  Trash2,
+  KeyRound,
+  Search,
+  X,
+  CheckCircle,
+  AlertCircle,
+  UserMinus,
+  FolderOpen,
+  MoreVertical,
+} from "lucide-react";
 import api from "../../api.js";
 import "../../components/Components.css";
 import "../dashboard/Dashboard.css";
@@ -55,7 +66,12 @@ function MemberActions({ user, onAssign, onReset, onRemoveCases, onDelete }) {
 
   return (
     <div ref={ref} className="memberActionsWrap">
-      <button type="button" className="memberDotsBtn" onClick={() => setOpen((v) => !v)} title="Actions">
+      <button
+        type="button"
+        className="memberDotsBtn"
+        onClick={() => setOpen((v) => !v)}
+        title="Actions"
+      >
         <MoreVertical size={16} />
       </button>
 
@@ -63,7 +79,9 @@ function MemberActions({ user, onAssign, onReset, onRemoveCases, onDelete }) {
         <div className="memberActionsDropdown">
           {item(<FolderOpen size={15} />, "Assign to Case", "#60a5fa", () => onAssign(user))}
           {item(<KeyRound size={15} />, "Reset Password", "#fbbf24", () => onReset(user))}
-          {item(<UserMinus size={15} />, "Remove from All Cases", "#fb923c", () => onRemoveCases(user))}
+          {item(<UserMinus size={15} />, "Remove from All Cases", "#fb923c", () =>
+            onRemoveCases(user),
+          )}
           {item(<Trash2 size={15} />, "Delete from System", "#f87171", () => onDelete(user))}
         </div>
       )}
@@ -81,7 +99,13 @@ export default function MembersPage() {
 
   /* Add member */
   const [showAdd, setShowAdd] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", role_name: "Police_Officer", Region: "", password: DEFAULT_PASSWORD });
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    role_name: "Police_Officer",
+    Region: "",
+    password: DEFAULT_PASSWORD,
+  });
   const [adding, setAdding] = useState(false);
 
   /* Reset password modal */
@@ -139,12 +163,20 @@ export default function MembersPage() {
       return;
     }
     const q = search.toLowerCase();
-    setFiltered(users.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q) || u.role_id?.role_name?.toLowerCase().includes(q)));
+    setFiltered(
+      users.filter(
+        (u) =>
+          u.name?.toLowerCase().includes(q) ||
+          u.email?.toLowerCase().includes(q) ||
+          u.role_id?.role_name?.toLowerCase().includes(q),
+      ),
+    );
   }, [search, users]);
 
   /* ─ Handlers ─ */
   const handleAdd = async () => {
-    if (!newUser.name.trim() || !newUser.email.trim()) return flash("error", "Name and email are required");
+    if (!newUser.name.trim() || !newUser.email.trim())
+      return flash("error", "Name and email are required");
     setAdding(true);
     try {
       await api.post("/users/create", {
@@ -155,7 +187,13 @@ export default function MembersPage() {
         password: newUser.password.trim() || DEFAULT_PASSWORD,
       });
       flash("success", `Member "${newUser.name}" created successfully`);
-      setNewUser({ name: "", email: "", role_name: "Police_Officer", Region: "", password: DEFAULT_PASSWORD });
+      setNewUser({
+        name: "",
+        email: "",
+        role_name: "Police_Officer",
+        Region: "",
+        password: DEFAULT_PASSWORD,
+      });
       setShowAdd(false);
       fetchUsers();
     } catch (err) {
@@ -166,7 +204,8 @@ export default function MembersPage() {
   };
 
   const handleDelete = async (u) => {
-    if (!window.confirm(`Permanently delete "${u.name}" from the system? This cannot be undone.`)) return;
+    if (!window.confirm(`Permanently delete "${u.name}" from the system? This cannot be undone.`))
+      return;
     try {
       await api.delete(`/users/${u._id}`);
       flash("success", `"${u.name}" deleted from system`);
@@ -203,14 +242,18 @@ export default function MembersPage() {
         setAssignMsg({ type: "", text: "" });
       }, 1200);
     } catch (err) {
-      setAssignMsg({ type: "error", text: err.response?.data?.message || "Failed to assign member" });
+      setAssignMsg({
+        type: "error",
+        text: err.response?.data?.message || "Failed to assign member",
+      });
     } finally {
       setAssigning(false);
     }
   };
 
   const handleResetPassword = async () => {
-    if (!newPassword || newPassword.length < 6) return flash("error", "Password must be at least 6 characters");
+    if (!newPassword || newPassword.length < 6)
+      return flash("error", "Password must be at least 6 characters");
     setResetting(true);
     try {
       await api.post(`/users/${resetTarget._id}/reset-password`, { newPassword });
@@ -224,7 +267,8 @@ export default function MembersPage() {
     }
   };
 
-  const getRoleStyle = (name) => ROLE_COLORS[name] || { color: "#94a3b8", bg: "rgba(148,163,184,0.1)" };
+  const getRoleStyle = (name) =>
+    ROLE_COLORS[name] || { color: "#94a3b8", bg: "rgba(148,163,184,0.1)" };
 
   /* ─── Render ─── */
   return (
@@ -236,10 +280,16 @@ export default function MembersPage() {
             <span>LEGALLENS</span> Members
           </h1>
           <p className="systemStatus">
-            Manage system users • <span className="highlightText">{users.length} total members</span>
+            Manage system users •{" "}
+            <span className="highlightText">{users.length} total members</span>
           </p>
         </div>
-        <button type="button" className="primaryActionBtn" style={{ width: "auto", padding: "0.75rem 1.5rem" }} onClick={() => setShowAdd((v) => !v)}>
+        <button
+          type="button"
+          className="primaryActionBtn"
+          style={{ width: "auto", padding: "0.75rem 1.5rem" }}
+          onClick={() => setShowAdd((v) => !v)}
+        >
           {showAdd ? (
             <>
               <X size={16} /> Cancel
@@ -254,7 +304,10 @@ export default function MembersPage() {
 
       {/* Alert banner */}
       {msg.text && (
-        <div className={`alertBanner ${msg.type === "success" ? "alertSuccess" : "alertError"}`} style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem" }}>
+        <div
+          className={`alertBanner ${msg.type === "success" ? "alertSuccess" : "alertError"}`}
+          style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem" }}
+        >
           {msg.type === "success" ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
           {msg.text}
         </div>
@@ -267,7 +320,14 @@ export default function MembersPage() {
             <div className="indicatorDot" style={{ background: "#34d399" }} />
             <h2>NEW MEMBER</h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", padding: "1.5rem" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "1rem",
+              padding: "1.5rem",
+            }}
+          >
             <div className="inputGroup">
               <label>Full Name *</label>
               <input
@@ -277,21 +337,38 @@ export default function MembersPage() {
                 onChange={(e) =>
                   setNewUser((p) => {
                     const n = e.target.value;
-                    return { ...p, name: n, email: !p.email || p.email === buildEmail(p.name) ? buildEmail(n) : p.email };
+                    return {
+                      ...p,
+                      name: n,
+                      email: !p.email || p.email === buildEmail(p.name) ? buildEmail(n) : p.email,
+                    };
                   })
                 }
               />
             </div>
             <div className="inputGroup">
               <label>Email Address *</label>
-              <input type="email" placeholder="john.smith@gmail.com" value={newUser.email} onChange={(e) => setNewUser((p) => ({ ...p, email: e.target.value }))} />
+              <input
+                type="email"
+                placeholder="john.smith@gmail.com"
+                value={newUser.email}
+                onChange={(e) => setNewUser((p) => ({ ...p, email: e.target.value }))}
+              />
             </div>
             <div className="inputGroup">
               <label>Role</label>
               <select
                 value={newUser.role_name}
                 onChange={(e) => setNewUser((p) => ({ ...p, role_name: e.target.value }))}
-                style={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.08)", color: "#fff", padding: "0.75rem 1rem", borderRadius: 8, fontSize: "0.9rem", width: "100%" }}
+                style={{
+                  background: "#1e293b",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  color: "#fff",
+                  padding: "0.75rem 1rem",
+                  borderRadius: 8,
+                  fontSize: "0.9rem",
+                  width: "100%",
+                }}
               >
                 {ROLES.map((r) => (
                   <option key={r} value={r}>
@@ -302,16 +379,34 @@ export default function MembersPage() {
             </div>
             <div className="inputGroup">
               <label>Region</label>
-              <input type="text" placeholder="e.g. North District" value={newUser.Region} onChange={(e) => setNewUser((p) => ({ ...p, Region: e.target.value }))} />
+              <input
+                type="text"
+                placeholder="e.g. North District"
+                value={newUser.Region}
+                onChange={(e) => setNewUser((p) => ({ ...p, Region: e.target.value }))}
+              />
             </div>
             <div className="inputGroup" style={{ gridColumn: "span 2" }}>
               <label>
-                Temporary Password <span style={{ color: "#475569", fontWeight: 400 }}>(default: pass123)</span>
+                Temporary Password{" "}
+                <span style={{ color: "#475569", fontWeight: 400 }}>(default: pass123)</span>
               </label>
-              <input type="text" placeholder="Leave blank for default" value={newUser.password} onChange={(e) => setNewUser((p) => ({ ...p, password: e.target.value }))} />
+              <input
+                type="text"
+                placeholder="Leave blank for default"
+                value={newUser.password}
+                onChange={(e) => setNewUser((p) => ({ ...p, password: e.target.value }))}
+              />
             </div>
           </div>
-          <div style={{ padding: "0 1.5rem 1.5rem", display: "flex", gap: "1rem", justifyContent: "flex-end" }}>
+          <div
+            style={{
+              padding: "0 1.5rem 1.5rem",
+              display: "flex",
+              gap: "1rem",
+              justifyContent: "flex-end",
+            }}
+          >
             <button type="button" className="btnCancel" onClick={() => setShowAdd(false)}>
               Cancel
             </button>
@@ -342,10 +437,27 @@ export default function MembersPage() {
                 placeholder="Search by name, email or role..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={{ background: "transparent", border: "none", outline: "none", color: "#fff", fontSize: "0.875rem", flex: 1 }}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  color: "#fff",
+                  fontSize: "0.875rem",
+                  flex: 1,
+                }}
               />
               {search && (
-                <button type="button" onClick={() => setSearch("")} style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", display: "flex" }}>
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#64748b",
+                    display: "flex",
+                  }}
+                >
                   <X size={14} />
                 </button>
               )}
@@ -367,7 +479,8 @@ export default function MembersPage() {
             {loading ? (
               <tr>
                 <td colSpan={5} style={{ textAlign: "center", padding: "3rem", color: "#475569" }}>
-                  <div className="miniSpinner" style={{ margin: "0 auto 0.75rem" }} /> Loading members...
+                  <div className="miniSpinner" style={{ margin: "0 auto 0.75rem" }} /> Loading
+                  members...
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
@@ -393,7 +506,18 @@ export default function MembersPage() {
                       </div>
                     </td>
                     <td>
-                      <span style={{ background: roleStyle.bg, color: roleStyle.color, padding: "3px 10px", borderRadius: 6, fontSize: "11px", fontWeight: 700 }}>{roleName.replace(/_/g, " ")}</span>
+                      <span
+                        style={{
+                          background: roleStyle.bg,
+                          color: roleStyle.color,
+                          padding: "3px 10px",
+                          borderRadius: 6,
+                          fontSize: "11px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {roleName.replace(/_/g, " ")}
+                      </span>
                     </td>
                     <td className="mutedText" style={{ fontSize: "0.8rem" }}>
                       {u.Region || "—"}
@@ -437,7 +561,11 @@ export default function MembersPage() {
             <div className="modalBody">
               <div className="modalField">
                 <label>Select Case</label>
-                <select className="modalInput" value={selectedCase} onChange={(e) => setSelectedCase(e.target.value)}>
+                <select
+                  className="modalInput"
+                  value={selectedCase}
+                  onChange={(e) => setSelectedCase(e.target.value)}
+                >
                   <option value="">— Choose a case —</option>
                   {caseList.map((c) => (
                     <option key={c._id || c.case_id} value={c.case_id}>
@@ -446,13 +574,29 @@ export default function MembersPage() {
                   ))}
                 </select>
               </div>
-              {assignMsg.text && <div className={`alertBanner ${assignMsg.type === "success" ? "alertSuccess" : "alertError"}`}>{assignMsg.text}</div>}
+              {assignMsg.text && (
+                <div
+                  className={`alertBanner ${assignMsg.type === "success" ? "alertSuccess" : "alertError"}`}
+                >
+                  {assignMsg.text}
+                </div>
+              )}
             </div>
             <div className="modalFooter">
-              <button type="button" className="secondaryActionBtn" style={{ width: "auto", padding: "0.5rem 1.25rem" }} onClick={() => setAssignTarget(null)}>
+              <button
+                type="button"
+                className="secondaryActionBtn"
+                style={{ width: "auto", padding: "0.5rem 1.25rem" }}
+                onClick={() => setAssignTarget(null)}
+              >
                 Cancel
               </button>
-              <button type="button" className="btnCreate" onClick={handleAssignCase} disabled={assigning}>
+              <button
+                type="button"
+                className="btnCreate"
+                onClick={handleAssignCase}
+                disabled={assigning}
+              >
                 {assigning ? "Assigning..." : "Assign to Case"}
               </button>
             </div>
@@ -473,7 +617,9 @@ export default function MembersPage() {
             <div className="modalHeader">
               <div>
                 <h2 className="modalTitle">Reset Password</h2>
-                <p className="modalSubtitle">For {resetTarget.name} — they'll be notified via the app</p>
+                <p className="modalSubtitle">
+                  For {resetTarget.name} — they'll be notified via the app
+                </p>
               </div>
               <button
                 type="button"
@@ -489,9 +635,17 @@ export default function MembersPage() {
             <div className="modalBody">
               <div className="modalField">
                 <label>
-                  New Password <span style={{ color: "#475569", fontWeight: 400 }}>(min 6 characters)</span>
+                  New Password{" "}
+                  <span style={{ color: "#475569", fontWeight: 400 }}>(min 6 characters)</span>
                 </label>
-                <input className="modalInput" type="text" placeholder="Enter new password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} autoFocus />
+                <input
+                  className="modalInput"
+                  type="text"
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  autoFocus
+                />
               </div>
             </div>
             <div className="modalFooter">
@@ -506,7 +660,12 @@ export default function MembersPage() {
               >
                 Cancel
               </button>
-              <button type="button" className="btnCreate" onClick={handleResetPassword} disabled={resetting}>
+              <button
+                type="button"
+                className="btnCreate"
+                onClick={handleResetPassword}
+                disabled={resetting}
+              >
                 {resetting ? (
                   "Resetting..."
                 ) : (

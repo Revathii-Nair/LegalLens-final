@@ -18,8 +18,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
-  }, []); // eslint-disable-line
-
+  }, []);
   const fetchProfile = async () => {
     try {
       const res = await api.get("/profile");
@@ -47,7 +46,7 @@ export default function ProfilePage() {
       const formData = new FormData();
       formData.append("avatar", file);
       const res = await api.post("/profile/avatar", formData, { headers: { "Content-Type": "multipart/form-data" } });
-      // Sync avatar to localStorage so Sidebar reflects it immediately
+
       const stored = JSON.parse(localStorage.getItem("user") || "{}");
       localStorage.setItem("user", JSON.stringify({ ...stored, avatar: res.data.avatar }));
       setSuccessMsg("Profile picture updated!");
@@ -65,7 +64,6 @@ export default function ProfilePage() {
     setErrorMsg("");
     try {
       const res = await api.put("/profile", form);
-      // Sync name to localStorage so Sidebar reflects it immediately
       const stored = JSON.parse(localStorage.getItem("user") || "{}");
       localStorage.setItem("user", JSON.stringify({ ...stored, name: res.data.user.name }));
       setProfile(res.data.user);
@@ -114,15 +112,24 @@ export default function ProfilePage() {
       )}
 
       <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", gap: "2rem" }}>
-        {/* Avatar Card */}
         <div>
           <div className="formSectionCard" style={{ textAlign: "center" }}>
             <div style={{ padding: "2rem" }}>
               <div style={{ position: "relative", display: "inline-block", marginBottom: "1.5rem" }}>
                 <div className="profileAvatarLarge">
-                  {avatarPreview ? <img src={avatarPreview} alt="avatar" className="profileAvatarImg" /> : <span className="profileAvatarInitial">{form.name?.charAt(0)?.toUpperCase() || "U"}</span>}
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt="avatar" className="profileAvatarImg" />
+                  ) : (
+                    <span className="profileAvatarInitial">{form.name?.charAt(0)?.toUpperCase() || "U"}</span>
+                  )}
                 </div>
-                <button type="button" className="avatarEditBtn" onClick={() => fileInputRef.current?.click()} disabled={uploadingAvatar} title="Change profile picture">
+                <button
+                  type="button"
+                  className="avatarEditBtn"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  title="Change profile picture"
+                >
                   {uploadingAvatar ? <div className="miniSpinner" /> : <Camera size={14} />}
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleAvatarChange} />
@@ -131,7 +138,17 @@ export default function ProfilePage() {
               <h2 style={{ fontWeight: 700, margin: "0 0 0.25rem", color: "inherit" }}>{profile.name || "—"}</h2>
               <p style={{ color: "#64748b", fontSize: "0.875rem", margin: "0 0 1rem" }}>{profile.email}</p>
 
-              <span style={{ display: "inline-block", background: roleStyle.bg, color: roleStyle.color, padding: "4px 14px", borderRadius: 20, fontSize: "0.75rem", fontWeight: 700 }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  background: roleStyle.bg,
+                  color: roleStyle.color,
+                  padding: "4px 14px",
+                  borderRadius: 20,
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                }}
+              >
                 <Shield size={11} style={{ display: "inline", marginRight: 5 }} />
                 {profile.role_name?.replace(/_/g, " ") || "—"}
               </span>
@@ -143,7 +160,9 @@ export default function ProfilePage() {
                 { label: "Phone", value: profile.phone || "—" },
               ].map(({ label, value }) => (
                 <div key={label} style={{ textAlign: "center", padding: "0.75rem" }}>
-                  <p style={{ color: "#64748b", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 0.25rem" }}>{label}</p>
+                  <p style={{ color: "#64748b", fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.1em", margin: "0 0 0.25rem" }}>
+                    {label}
+                  </p>
                   <p style={{ color: "#e2e8f0", fontSize: "0.85rem", fontWeight: 600, margin: 0 }}>{value}</p>
                 </div>
               ))}
@@ -151,7 +170,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Edit Form */}
         <div>
           <div className="formSectionCard">
             <div className="sectionHeader">
@@ -185,14 +203,25 @@ export default function ProfilePage() {
                   <Building size={13} style={{ marginRight: 5 }} />
                   Department
                 </label>
-                <input type="text" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} placeholder="e.g. Cybercrime Unit" />
+                <input
+                  type="text"
+                  value={form.department}
+                  onChange={(e) => setForm({ ...form, department: e.target.value })}
+                  placeholder="e.g. Cybercrime Unit"
+                />
               </div>
               <div className="inputGroup" style={{ gridColumn: "span 2" }}>
                 <label>
                   <FileText size={13} style={{ marginRight: 5 }} />
                   About Me
                 </label>
-                <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Write a short bio..." rows={4} style={{ resize: "vertical" }} />
+                <textarea
+                  value={form.bio}
+                  onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                  placeholder="Write a short bio..."
+                  rows={4}
+                  style={{ resize: "vertical" }}
+                />
               </div>
             </div>
           </div>

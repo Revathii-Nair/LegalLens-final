@@ -1,16 +1,17 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { Bell, Check, CheckCheck, RefreshCw, AlertCircle } from "lucide-react";
 import api from "../../api.js";
 import "../dashboard/Dashboard.css";
+import "../../components/Components.css";
 
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
-  const [filter,   setFilter]   = useState("all");
-  const [loading,  setLoading]  = useState(true);
-  const [error,    setError]    = useState("");
+  const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [retrying, setRetrying] = useState(false);
 
-  const load = useCallback(async (showLoader = false) => {
+  const load = async (showLoader = false) => {
     if (showLoader) setLoading(true);
     setError("");
     try {
@@ -23,28 +24,25 @@ export default function NotificationsPage() {
       setLoading(false);
       setRetrying(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     load(true);
     const interval = setInterval(() => load(false), 8000);
     return () => clearInterval(interval);
-  }, [load]);
+  }, []);
 
-  const handleRetry = () => { setRetrying(true); load(true); };
+  const handleRetry = () => {
+    setRetrying(true);
+    load(true);
+  };
 
   const handleMarkRead = async (id) => {
-    // optimistic update
-    setNotifications((prev) =>
-      prev.map((n) => (n._id === id ? { ...n, read: true } : n)),
-    );
+    setNotifications((prev) => prev.map((n) => (n._id === id ? { ...n, read: true } : n)));
     try {
       await api.patch(`/notifications/${id}/read`);
     } catch {
-      // revert on failure
-      setNotifications((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, read: false } : n)),
-      );
+      setNotifications((prev) => prev.map((n) => (n._id === id ? { ...n, read: false } : n)));
     }
   };
 
@@ -62,17 +60,17 @@ export default function NotificationsPage() {
     if (!ts) return "Unknown time";
     const diff = Date.now() - new Date(ts).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 1)  return "Just now";
+    if (mins < 1) return "Just now";
     if (mins < 60) return `${mins} minute${mins > 1 ? "s" : ""} ago`;
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24)  return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
+    if (hrs < 24) return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
     const days = Math.floor(hrs / 24);
     return `${days} day${days > 1 ? "s" : ""} ago`;
   };
 
   const filtered = notifications.filter((n) => {
     if (filter === "unread") return !n.read;
-    if (filter === "read")   return n.read;
+    if (filter === "read") return n.read;
     return true;
   });
 
@@ -86,12 +84,14 @@ export default function NotificationsPage() {
             <span>LEGALLENS</span> Notifications
           </h1>
           <p className="systemStatus">
-            {loading ? "Loading…" : error ? (
-              <span style={{ color: "#f87171" }}>Could not load — see below</span>
+            {loading ? (
+              "Loading…"
+            ) : error ? (
+              <span className="notifErrorText">Could not load — see below</span>
             ) : unreadCount > 0 ? (
               <span>
-                <span className="highlightText">{unreadCount}</span>{" "}
-                unread notification{unreadCount > 1 ? "s" : ""}
+                <span className="highlightText">{unreadCount}</span> unread notification
+                {unreadCount > 1 ? "s" : ""}
               </span>
             ) : (
               "All caught up!"
@@ -99,104 +99,66 @@ export default function NotificationsPage() {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-          {/* Refresh button */}
-          <button
-            className="secondaryActionBtn"
-            style={{ width: "auto", padding: "0.6rem 1rem", display: "flex", alignItems: "center", gap: "0.4rem" }}
-            onClick={handleRetry}
-            disabled={retrying}
-            title="Refresh notifications"
-          >
+        <div className="notifHeaderActions">
+          <button className="secondaryActionBtn notifRefreshBtn" onClick={handleRetry} disabled={retrying} title="Refresh notifications">
             <RefreshCw size={15} style={{ animation: retrying ? "spin 0.8s linear infinite" : "none" }} />
             Refresh
           </button>
 
           {unreadCount > 0 && (
-            <button
-              className="primaryActionBtn"
-              style={{ width: "auto", padding: "0.6rem 1.5rem" }}
-              onClick={handleMarkAllRead}
-            >
+            <button className="primaryActionBtn notifMarkAllBtn" onClick={handleMarkAllRead}>
               <CheckCheck size={16} /> Mark all read
             </button>
           )}
         </div>
       </header>
 
-      {/* Filter Tabs */}
       <div className="notifFilterTabs">
         {[
-          { key: "all",    label: `All (${notifications.length})` },
-          { key: "unread", label: `Unread (${notifications.filter((n) => !n.read).length})` },
-          { key: "read",   label: `Read (${notifications.filter((n) => n.read).length})` },
+          { key: "all", label: `All (${notifications.length})` },
+          {
+            key: "unread",
+            label: `Unread (${notifications.filter((n) => !n.read).length})`,
+          },
+          { key: "read", label: `Read (${notifications.filter((n) => n.read).length})` },
         ].map(({ key, label }) => (
-          <button
-            key={key}
-            className={`notifFilterTab ${filter === key ? "notifFilterTabActive" : ""}`}
-            onClick={() => setFilter(key)}
-          >
+          <button key={key} className={`notifFilterTab ${filter === key ? "notifFilterTabActive" : ""}`} onClick={() => setFilter(key)}>
             {label}
           </button>
         ))}
       </div>
 
-      {/* List */}
       <div className="notifPageList">
         {loading ? (
           <div className="notifLoadingState">
             <div className="notifLoadingSpinner" />
             <p>Loading notifications…</p>
           </div>
-
         ) : error ? (
-          <div className="notifEmptyState" style={{ gap: "1rem" }}>
-            <AlertCircle size={48} style={{ color: "#f87171" }} />
-            <p style={{ color: "#f87171", margin: 0 }}>{error}</p>
-            <button
-              className="primaryActionBtn"
-              style={{ width: "auto", padding: "0.6rem 1.5rem" }}
-              onClick={handleRetry}
-              disabled={retrying}
-            >
+          <div className="notifEmptyState notifErrorState">
+            <AlertCircle size={48} className="notifErrorIcon" />
+            <p className="notifErrorMsg">{error}</p>
+            <button className="primaryActionBtn notifRetryBtn" onClick={handleRetry} disabled={retrying}>
               <RefreshCw size={15} /> Try again
             </button>
           </div>
-
         ) : filtered.length === 0 ? (
           <div className="notifEmptyState">
-            <Bell size={48} style={{ color: "#334155" }} />
-            <p>
-              {filter !== "all"
-                ? `No ${filter} notifications`
-                : "No notifications yet — they'll appear here as you work on cases"}
-            </p>
+            <Bell size={48} className="notifEmptyIcon" />
+            <p>{filter !== "all" ? `No ${filter} notifications` : "No notifications yet — they'll appear here as you work on cases"}</p>
           </div>
-
         ) : (
           filtered.map((n) => (
-            <div
-              key={n._id}
-              className={`notifPageItem ${n.read ? "notifPageItemRead" : "notifPageItemUnread"}`}
-            >
-              <div
-                className="notifPageDot"
-                style={{ background: n.read ? "#334155" : "#4f46e5" }}
-              />
+            <div key={n._id} className={`notifPageItem ${n.read ? "notifPageItemRead" : "notifPageItemUnread"}`}>
+              <div className="notifPageDot" style={{ background: n.read ? "#334155" : "#4f46e5" }} />
               <div className="notifPageContent">
                 <p className="notifPageText">{n.message}</p>
                 <span className="notifPageTime">{formatTime(n.created_at)}</span>
               </div>
               <div className="notifPageStatus">
-                <span className={`notifStatusBadge ${n.read ? "notifStatusRead" : "notifStatusUnread"}`}>
-                  {n.read ? "Read" : "Unread"}
-                </span>
+                <span className={`notifStatusBadge ${n.read ? "notifStatusRead" : "notifStatusUnread"}`}>{n.read ? "Read" : "Unread"}</span>
                 {!n.read && (
-                  <button
-                    className="notifMarkBtn"
-                    onClick={() => handleMarkRead(n._id)}
-                    title="Mark as read"
-                  >
+                  <button className="notifMarkBtn" onClick={() => handleMarkRead(n._id)} title="Mark as read">
                     <Check size={14} />
                   </button>
                 )}

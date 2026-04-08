@@ -1,38 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Moon,
-  Sun,
-  Bell,
-  Shield,
-  Lock,
-  Eye,
-  EyeOff,
-  ChevronRight,
-  Monitor,
-} from "lucide-react";
+import { Moon, Sun, Bell, Shield, Lock, Eye, EyeOff, ChevronRight, Monitor } from "lucide-react";
 import api from "../../api.js";
 import "../dashboard/Dashboard.css";
+import "../../components/Components.css";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const [theme, setTheme] = useState(
-    localStorage.getItem("ll_theme") || "dark",
-  );
+  const [theme, setTheme] = useState(localStorage.getItem("ll_theme") || "dark");
   const [notifications, setNotifications] = useState({
-    caseAssigned: JSON.parse(
-      localStorage.getItem("ll_notif_caseAssigned") ?? "true",
-    ),
-    evidenceUploaded: JSON.parse(
-      localStorage.getItem("ll_notif_evidenceUploaded") ?? "true",
-    ),
-    statusChanged: JSON.parse(
-      localStorage.getItem("ll_notif_statusChanged") ?? "true",
-    ),
-    auditAlerts: JSON.parse(
-      localStorage.getItem("ll_notif_auditAlerts") ?? "true",
-    ),
+    caseAssigned: JSON.parse(localStorage.getItem("ll_notif_caseAssigned") ?? "true"),
+    evidenceUploaded: JSON.parse(localStorage.getItem("ll_notif_evidenceUploaded") ?? "true"),
+    statusChanged: JSON.parse(localStorage.getItem("ll_notif_statusChanged") ?? "true"),
+    auditAlerts: JSON.parse(localStorage.getItem("ll_notif_auditAlerts") ?? "true"),
   });
   const [privacy, setPrivacy] = useState({
     showEmail: JSON.parse(localStorage.getItem("ll_priv_showEmail") ?? "false"),
@@ -82,16 +63,9 @@ export default function SettingsPage() {
   const handleChangePassword = async () => {
     setPassError("");
     setPassSuccess("");
-    if (
-      !changePassForm.current ||
-      !changePassForm.newPass ||
-      !changePassForm.confirm
-    )
-      return setPassError("Please fill all fields");
-    if (changePassForm.newPass !== changePassForm.confirm)
-      return setPassError("Passwords do not match");
-    if (changePassForm.newPass.length < 6)
-      return setPassError("Password must be at least 6 characters");
+    if (!changePassForm.current || !changePassForm.newPass || !changePassForm.confirm) return setPassError("Please fill all fields");
+    if (changePassForm.newPass !== changePassForm.confirm) return setPassError("Passwords do not match");
+    if (changePassForm.newPass.length < 6) return setPassError("Password must be at least 6 characters");
     setSaving(true);
     try {
       await api.post("/change-password", {
@@ -101,11 +75,7 @@ export default function SettingsPage() {
       setPassSuccess("Password changed successfully!");
       setChangePassForm({ current: "", newPass: "", confirm: "" });
     } catch (err) {
-      setPassError(
-        err.response?.data?.message ||
-          err.message ||
-          "Failed to change password",
-      );
+      setPassError(err.response?.data?.message || err.message || "Failed to change password");
     } finally {
       setSaving(false);
     }
@@ -115,30 +85,9 @@ export default function SettingsPage() {
     <button
       type="button"
       onClick={() => onChange(!value)}
-      style={{
-        width: 44,
-        height: 24,
-        borderRadius: 12,
-        border: "none",
-        cursor: "pointer",
-        background: value ? "#4f46e5" : "rgba(100,116,139,0.3)",
-        position: "relative",
-        transition: "background 0.2s",
-        flexShrink: 0,
-      }}
+      className={`settingsToggleBtn ${value ? "settingsToggleBtnActive" : "settingsToggleBtnInactive"}`}
     >
-      <span
-        style={{
-          position: "absolute",
-          top: 3,
-          left: value ? "calc(100% - 21px)" : 3,
-          width: 18,
-          height: 18,
-          borderRadius: "50%",
-          background: "white",
-          transition: "left 0.2s",
-        }}
-      />
+      <span className="settingsToggleDot" style={{ left: value ? "calc(100% - 21px)" : "3px" }} />
     </button>
   );
 
@@ -156,15 +105,12 @@ export default function SettingsPage() {
   );
 
   const SectionCard = ({ title, dot, children }) => (
-    <div className="formSectionCard" style={{ marginBottom: "1.5rem" }}>
+    <div className="formSectionCard settingsSectionCard">
       <div className="sectionHeader">
-        <div
-          className="indicatorDot"
-          style={{ background: dot || "#3b82f6" }}
-        />
+        <div className="indicatorDot" style={{ background: dot || "#3b82f6" }} />
         <h2>{title}</h2>
       </div>
-      <div style={{ padding: "0.5rem 0" }}>{children}</div>
+      <div className="settingsSectionBody">{children}</div>
     </div>
   );
 
@@ -175,41 +121,18 @@ export default function SettingsPage() {
           <h1 className="logoText">
             <span>LEGALLENS</span> Settings
           </h1>
-          <p className="systemStatus">
-            Manage your preferences and account settings
-          </p>
+          <p className="systemStatus">Manage your preferences and account settings</p>
         </div>
       </header>
 
-      <div style={{ maxWidth: 760 }}>
+      <div className="settingsContainer">
         {/* Profile Quick Access */}
         <SectionCard title="PROFILE" dot="#818cf8">
-          <div
-            className="settingRow settingRowClickable"
-            onClick={() => navigate("/profile")}
-            style={{ cursor: "pointer" }}
-          >
+          <div className="settingRow settingRowClickable settingsProfileRow" onClick={() => navigate("/profile")}>
             <div className="settingRowLeft">
-              <div
-                className="avatarCircle"
-                style={{
-                  width: 44,
-                  height: 44,
-                  fontSize: 18,
-                  background: "linear-gradient(135deg, #4f46e5, #9333ea)",
-                }}
-              >
+              <div className="avatarCircle settingsProfileAvatar">
                 {user?.avatar ? (
-                  <img
-                    src={`http://localhost:5000${user.avatar}`}
-                    alt=""
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: "50%",
-                      objectFit: "cover",
-                    }}
-                  />
+                  <img src={`http://localhost:5000${user.avatar}`} alt="" className="settingsAvatarImg" />
                 ) : (
                   user?.name?.charAt(0)?.toUpperCase()
                 )}
@@ -221,13 +144,8 @@ export default function SettingsPage() {
                 </p>
               </div>
             </div>
-            <div
-              className="settingRowRight"
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-            >
-              <span style={{ fontSize: "0.8rem", color: "#818cf8" }}>
-                Edit Profile
-              </span>
+            <div className="settingRowRight settingsProfileEditWrap">
+              <span className="settingsProfileEditText">Edit Profile</span>
               <ChevronRight size={16} color="#818cf8" />
             </div>
           </div>
@@ -235,11 +153,7 @@ export default function SettingsPage() {
 
         {/* Appearance */}
         <SectionCard title="APPEARANCE" dot="#34d399">
-          <SettingRow
-            icon={<Monitor size={18} color="#94a3b8" />}
-            title="Theme"
-            description="Choose your preferred color scheme"
-          >
+          <SettingRow icon={<Monitor size={18} color="#94a3b8" />} title="Theme" description="Choose your preferred color scheme">
             <div className="themeSelector">
               {[
                 { value: "dark", icon: <Moon size={14} />, label: "Dark" },
@@ -286,74 +200,37 @@ export default function SettingsPage() {
                 ]
               : []),
           ].map(({ key, title, desc }) => (
-            <SettingRow
-              key={key}
-              icon={<Bell size={18} color="#94a3b8" />}
-              title={title}
-              description={desc}
-            >
-              <ToggleSwitch
-                value={notifications[key]}
-                onChange={(v) => saveNotifPref(key, v)}
-              />
+            <SettingRow key={key} icon={<Bell size={18} color="#94a3b8" />} title={title} description={desc}>
+              <ToggleSwitch value={notifications[key]} onChange={(v) => saveNotifPref(key, v)} />
             </SettingRow>
           ))}
         </SectionCard>
 
         {/* Privacy & Security */}
         <SectionCard title="PRIVACY & SECURITY" dot="#f87171">
-          <SettingRow
-            icon={<Eye size={18} color="#94a3b8" />}
-            title="Show Email to Team"
-            description="Other members can see your email address"
-          >
-            <ToggleSwitch
-              value={privacy.showEmail}
-              onChange={(v) => savePrivacyPref("showEmail", v)}
-            />
+          <SettingRow icon={<Eye size={18} color="#94a3b8" />} title="Show Email to Team" description="Other members can see your email address">
+            <ToggleSwitch value={privacy.showEmail} onChange={(v) => savePrivacyPref("showEmail", v)} />
           </SettingRow>
 
-          <SettingRow
-            icon={<Shield size={18} color="#94a3b8" />}
-            title="Session Timeout"
-            description="Auto logout after inactivity"
-          >
+          <SettingRow icon={<Shield size={18} color="#94a3b8" />} title="Session Timeout" description="Auto logout after inactivity">
             <select
               value={privacy.sessionTimeout}
-              onChange={(e) =>
-                savePrivacyPref("sessionTimeout", e.target.value)
-              }
-              className="modalInput"
-              style={{
-                padding: "0.4rem 0.75rem",
-                fontSize: "0.85rem",
-                width: "auto",
-              }}
+              onChange={(e) => savePrivacyPref("sessionTimeout", e.target.value)}
+              className="modalInput settingsTimeoutSelect"
             >
               {[15, 30, 60, 120, 240].map((v) => (
                 <option key={v} value={String(v)}>
-                  {v < 60
-                    ? `${v} minutes`
-                    : `${v / 60} hour${v > 60 ? "s" : ""}`}
+                  {v < 60 ? `${v} minutes` : `${v / 60} hour${v > 60 ? "s" : ""}`}
                 </option>
               ))}
             </select>
           </SettingRow>
 
           {/* Change Password */}
-          <SettingRow
-            icon={<Lock size={18} color="#94a3b8" />}
-            title="Change Password"
-            description="Update your account password"
-          >
+          <SettingRow icon={<Lock size={18} color="#94a3b8" />} title="Change Password" description="Update your account password">
             <button
               type="button"
-              className="secondaryActionBtn"
-              style={{
-                padding: "0.4rem 1rem",
-                width: "auto",
-                fontSize: "0.8rem",
-              }}
+              className="secondaryActionBtn settingsChangePassBtn"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -365,37 +242,23 @@ export default function SettingsPage() {
           </SettingRow>
         </SectionCard>
 
+        {/* Change Password Modal */}
         {showPassFields && (
-          <div
-            className="modalOverlay"
-            onClick={() => handleTogglePassFields(false)}
-          >
-            <div
-              className="modalBox"
-              onClick={(e) => e.stopPropagation()}
-              style={{ maxWidth: 520 }}
-            >
+          <div className="modalOverlay" onClick={() => handleTogglePassFields(false)}>
+            <div className="modalBox settingsPassModal" onClick={(e) => e.stopPropagation()}>
               <div className="modalHeader">
                 <div>
                   <h2 className="modalTitle">Change Password</h2>
                   <p className="modalSubtitle">Update your account password</p>
                 </div>
-                <button
-                  type="button"
-                  className="modalCloseBtn"
-                  onClick={() => handleTogglePassFields(false)}
-                >
+                <button type="button" className="modalCloseBtn" onClick={() => handleTogglePassFields(false)}>
                   ×
                 </button>
               </div>
 
               <div className="modalBody">
-                {passError && (
-                  <div className="alertBanner alertError">{passError}</div>
-                )}
-                {passSuccess && (
-                  <div className="alertBanner alertSuccess">{passSuccess}</div>
-                )}
+                {passError && <div className="alertBanner alertError">{passError}</div>}
+                {passSuccess && <div className="alertBanner alertSuccess">{passSuccess}</div>}
 
                 {[
                   {
@@ -419,7 +282,7 @@ export default function SettingsPage() {
                 ].map(({ label, key, show, toggle }) => (
                   <div key={key} className="modalField">
                     <label>{label}</label>
-                    <div style={{ position: "relative" }}>
+                    <div className="settingsPassInputWrap">
                       <input
                         className="modalInput"
                         type={show ? "text" : "password"}
@@ -436,20 +299,11 @@ export default function SettingsPage() {
                       {toggle && (
                         <button
                           type="button"
+                          className="settingsPassToggleBtn"
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
                             toggle();
-                          }}
-                          style={{
-                            position: "absolute",
-                            right: "0.75rem",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            background: "none",
-                            border: "none",
-                            color: "#64748b",
-                            cursor: "pointer",
                           }}
                         >
                           {show ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -461,19 +315,10 @@ export default function SettingsPage() {
               </div>
 
               <div className="modalFooter">
-                <button
-                  type="button"
-                  className="secondaryActionBtn"
-                  onClick={() => handleTogglePassFields(false)}
-                >
+                <button type="button" className="secondaryActionBtn" onClick={() => handleTogglePassFields(false)}>
                   Cancel
                 </button>
-                <button
-                  type="button"
-                  className="btnCreate"
-                  onClick={handleChangePassword}
-                  disabled={saving}
-                >
+                <button type="button" className="btnCreate" onClick={handleChangePassword} disabled={saving}>
                   {saving ? "Saving..." : "Update Password"}
                 </button>
               </div>
@@ -490,16 +335,8 @@ export default function SettingsPage() {
             { label: "Session", value: "Active" },
           ].map(({ label, value }) => (
             <div key={label} className="settingRow">
-              <p className="settingRowTitle" style={{ color: "#64748b" }}>
-                {label}
-              </p>
-              <p
-                style={{
-                  color: label === "Session" ? "#34d399" : "#94a3b8",
-                  fontSize: "0.875rem",
-                  fontFamily: label === "User ID" ? "monospace" : "inherit",
-                }}
-              >
+              <p className="settingRowTitle settingsInfoLabel">{label}</p>
+              <p className={`settingsInfoValue ${label === "Session" ? "settingsInfoSession" : label === "User ID" ? "settingsInfoUserId" : ""}`}>
                 {value}
               </p>
             </div>

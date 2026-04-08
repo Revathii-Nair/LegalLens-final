@@ -1,0 +1,45 @@
+# Node.js dependencies
+node_modules/
+Frontend/node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Cache
+.cache/
+Frontend/node_modules/.cache/
+.tmp/
+
+# Coverage reports
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.tgz
+*.zip

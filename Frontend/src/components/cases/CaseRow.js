@@ -1,9 +1,17 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import '../../components/Components.css';
+import "../../components/Components.css";
 
-const PRIORITY_CLASSES = { High: "rowPriorityHigh", Medium: "rowPriorityMedium", Low: "rowPriorityLow" };
-const STATUS_CLASSES = { Open: "rowStatusOpen", Close: "rowStatusClose", Archived: "rowStatusArchived" };
+const pri_cls = {
+  High: "rowPriorityHigh",
+  Medium: "rowPriorityMedium",
+  Low: "rowPriorityLow",
+};
+const stats_cls = {
+  Open: "rowStatusOpen",
+  Close: "rowStatusClose",
+  Archived: "rowStatusArchived",
+};
 
 export default function CaseRow({ id, title, priority, status }) {
   const navigate = useNavigate();
@@ -14,8 +22,8 @@ export default function CaseRow({ id, title, priority, status }) {
         <span className="caseRowTitle">{title}</span>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-        <span className={`caseRowBadge ${PRIORITY_CLASSES[priority] || ""}`}>{priority}</span>
-        <span className={`caseRowBadge ${STATUS_CLASSES[status] || ""}`}>{status}</span>
+        <span className={`caseRowBadge ${pri_cls[priority] || ""}`}>{priority}</span>
+        <span className={`caseRowBadge ${stats_cls[status] || ""}`}>{status}</span>
       </div>
     </div>
   );

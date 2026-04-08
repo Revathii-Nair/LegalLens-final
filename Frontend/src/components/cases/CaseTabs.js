@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import '../../components/Components.css';
+import React, { useState } from "react";
+import "../../components/Components.css";
 
 export default function CaseTabs({ tabs }) {
-  const [activeTab, setActiveTab] = useState(tabs?.[0]?.label || '');
+  const [activeTab, setActiveTab] = useState(tabs?.[0]?.label || "");
 
   if (!tabs || tabs.length === 0) return null;
 
@@ -14,7 +14,7 @@ export default function CaseTabs({ tabs }) {
         {tabs.map((tab) => (
           <button
             key={tab.label}
-            className={`tabBtn ${currentTab.label === tab.label ? 'tabActive' : ''}`}
+            className={`tabBtn ${currentTab.label === tab.label ? "tabActive" : ""}`}
             onClick={() => setActiveTab(tab.label)}
           >
             {tab.label}

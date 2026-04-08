@@ -10,11 +10,7 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    title: "",
-    event_date: "",
-    description: "",
-  });
+  const [form, setForm] = useState({ title: "", event_date: "", description: "" });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -42,7 +38,7 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
       active = false;
       clearInterval(interval);
     };
-  }, [caseId, fetchEvents, refreshKey]);
+  }, [fetchEvents, refreshKey]);
 
   const handleAdd = async () => {
     if (!form.title.trim()) return setError("Event title is required");
@@ -51,9 +47,7 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
     try {
       await api.post(`/case/${caseId}/events`, {
         title: form.title.trim(),
-        event_date: form.event_date
-          ? new Date(form.event_date).toISOString()
-          : new Date().toISOString(),
+        event_date: form.event_date ? new Date(form.event_date).toISOString() : new Date().toISOString(),
         description: form.description,
       });
       setForm({ title: "", event_date: "", description: "" });
@@ -87,23 +81,14 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
         })
       : "—";
 
-  // Helper: is this a real DB event (deletable) vs synthetic/system event?
   const isRealDbEvent = (event) => {
     if (event.isSystem) return false;
-    // Synthetic events from backend have string _id like "legacy-evidence-xxx", "legacy-audit-xxx"
     const id = String(event._id || "");
-    if (
-      id.startsWith("legacy-") ||
-      id.startsWith("case-open") ||
-      id.startsWith("case-close") ||
-      id.startsWith("lead-assign")
-    )
-      return false;
-    // Real MongoDB ObjectIds are 24-char hex strings
+    if (id.startsWith("legacy-") || id.startsWith("case-open") || id.startsWith("case-close") || id.startsWith("lead-assign")) return false;
+
     return /^[a-f0-9]{24}$/i.test(id);
   };
 
-  // Build combined timeline with system events
   const baseEvents = [];
   if (caseData?.start_date) {
     baseEvents.push({
@@ -124,10 +109,7 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
     });
   }
 
-  const allEvents = [
-    ...baseEvents,
-    ...events.map((e) => ({ ...e, color: "#818cf8" })),
-  ];
+  const allEvents = [...baseEvents, ...events.map((e) => ({ ...e, color: "#818cf8" }))];
 
   if (caseData?.status === "Close" && caseData?.end_date) {
     allEvents.push({
@@ -139,120 +121,53 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
     });
   }
 
-  allEvents.sort(
-    (a, b) =>
-      new Date(a.event_date || 0) - new Date(b.event_date || 0),
-  );
+  allEvents.sort((a, b) => new Date(a.event_date || 0) - new Date(b.event_date || 0));
 
   return (
     <div className="timelineContainer">
-      {/* Add Event Button */}
       {isAdminOrLead && (
-        <div style={{ marginBottom: "1.25rem" }}>
+        <div className="timelineAddSection">
           <button
+            className="timelineAddBtn"
             onClick={() => {
               setShowForm((v) => !v);
               setError("");
-            }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              background: "rgba(79,70,229,0.1)",
-              border: "1px solid rgba(79,70,229,0.25)",
-              color: "#818cf8",
-              padding: "0.5rem 1rem",
-              borderRadius: 8,
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: 600,
             }}
           >
             <Plus size={15} />
             {showForm ? "Cancel" : "Add Timeline Event"}
           </button>
 
-          {successMsg && (
-            <p
-              style={{
-                color: "#34d399",
-                fontSize: "0.8rem",
-                marginTop: "0.5rem",
-              }}
-            >
-              {successMsg}
-            </p>
-          )}
+          {successMsg && <p className="timelineSuccessMsg">{successMsg}</p>}
 
           {showForm && (
-            <div
-              style={{
-                marginTop: "0.75rem",
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.06)",
-                borderRadius: 10,
-                padding: "1.25rem",
-              }}
-            >
-              {error && (
-                <p
-                  style={{
-                    color: "#f87171",
-                    fontSize: "0.8rem",
-                    marginBottom: "0.75rem",
-                  }}
-                >
-                  {error}
-                </p>
-              )}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "0.75rem",
-                }}
-              >
+            <div className="timelineFormBox">
+              {error && <p className="timelineErrorMsg">{error}</p>}
+              <div className="timelineFormGrid">
                 <div className="inputGroup">
                   <label>Event Title *</label>
                   <input
                     type="text"
                     placeholder="e.g. Witness interviewed"
                     value={form.title}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, title: e.target.value }))
-                    }
+                    onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
                   />
                 </div>
                 <div className="inputGroup">
                   <label>Date</label>
-                  <input
-                    type="date"
-                    value={form.event_date}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, event_date: e.target.value }))
-                    }
-                  />
+                  <input type="date" value={form.event_date} onChange={(e) => setForm((p) => ({ ...p, event_date: e.target.value }))} />
                 </div>
-                <div className="inputGroup" style={{ gridColumn: "span 2" }}>
+                <div className="inputGroup timelineDescGroup">
                   <label>Description</label>
                   <input
                     type="text"
                     placeholder="Optional details..."
                     value={form.description}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, description: e.target.value }))
-                    }
+                    onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
                   />
                 </div>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.75rem",
-                  marginTop: "0.75rem",
-                  justifyContent: "flex-end",
-                }}
-              >
+              <div className="timelineFormActions">
                 <button
                   className="btnCancel"
                   onClick={() => {
@@ -262,11 +177,7 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
                 >
                   Cancel
                 </button>
-                <button
-                  className="btnCreate"
-                  onClick={handleAdd}
-                  disabled={submitting}
-                >
+                <button className="btnCreate" onClick={handleAdd} disabled={submitting}>
                   {submitting ? "Adding..." : "Add Event"}
                 </button>
               </div>
@@ -275,96 +186,35 @@ export default function TimelineTab({ caseId, caseData, refreshKey = 0 }) {
         </div>
       )}
 
-      {/* Timeline */}
       {loading ? (
-        <div
-          style={{ textAlign: "center", padding: "2rem", color: "#475569" }}
-        >
-          <div className="miniSpinner" style={{ margin: "0 auto 0.75rem" }} />
+        <div className="timelineLoadingState">
+          <div className="miniSpinner timelineSpinner" />
           Loading timeline...
         </div>
       ) : allEvents.length === 0 ? (
-        <p style={{ color: "#475569", fontSize: "0.875rem" }}>
-          No timeline events yet
-        </p>
+        <p className="timelineEmptyState">No timeline events yet</p>
       ) : (
         allEvents.map((event, i) => (
           <div key={event._id} className="timelineEntry">
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <div
-                className="timelineDot"
-                style={{ background: event.color }}
-              />
-              {i < allEvents.length - 1 && (
-                <div
-                  style={{
-                    width: 2,
-                    flex: 1,
-                    background: "rgba(255,255,255,0.06)",
-                    minHeight: 24,
-                    marginTop: 4,
-                  }}
-                />
-              )}
+            <div className="timelineConnectorCol">
+              <div className="timelineDot" style={{ background: event.color }} />
+              {i < allEvents.length - 1 && <div className="timelineLine" />}
             </div>
-            <div
-              style={{
-                paddingBottom: i < allEvents.length - 1 ? "1.25rem" : 0,
-                flex: 1,
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-              }}
-            >
+            <div className="timelineContentCol" style={{ paddingBottom: i < allEvents.length - 1 ? "1.25rem" : 0 }}>
               <div>
                 <p className="timelineInfo">{event.title}</p>
-                {event.description && (
-                  <p
-                    style={{
-                      color: "#475569",
-                      fontSize: "0.78rem",
-                      margin: "2px 0 0",
-                    }}
-                  >
-                    {event.description}
-                  </p>
-                )}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 4,
-                    marginTop: 2,
-                  }}
-                >
+                {event.description && <p className="timelineItemDesc">{event.description}</p>}
+                <div className="timelineItemMeta">
                   <Calendar size={10} color="#334155" />
-                  <span style={{ fontSize: "0.7rem", color: "#334155" }}>
+                  <span className="timelineItemMetaText">
                     {formatDate(event.event_date)}
-                    {event.created_by?.name && (
-                      <span> • Added by {event.created_by.name}</span>
-                    )}
+                    {event.created_by?.name && <span> • Added by {event.created_by.name}</span>}
                   </span>
                 </div>
               </div>
 
-              {/* Only show delete for real DB events (not synthetic/system) */}
               {isAdminOrLead && isRealDbEvent(event) && (
-                <button
-                  className="actionCircle"
-                  onClick={() => handleDelete(event._id)}
-                  title="Delete event"
-                  style={{
-                    color: "#f87171",
-                    flexShrink: 0,
-                    marginLeft: "1rem",
-                  }}
-                >
+                <button className="actionCircle timelineDeleteBtn" onClick={() => handleDelete(event._id)} title="Delete event">
                   <Trash2 size={13} />
                 </button>
               )}
