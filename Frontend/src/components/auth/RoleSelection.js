@@ -105,7 +105,7 @@ function RoleSelection({ onRoleSelect }) {
               <div className="roleIcon adminIcon">
                 <i className="bx bx-user-check" />
               </div>
-              <h3>Administrator</h3>
+              <h3>Supervising Officer</h3>
               <p>Manage users & system settings</p>
             </div>
 
@@ -117,13 +117,6 @@ function RoleSelection({ onRoleSelect }) {
               <p>Lead investigations & team oversight</p>
             </div>
           </div>
-
-          <footer className="formFooter">
-            Need help?{" "}
-            <button type="button" className="linkBtnInline">
-              Contact support
-            </button>
-          </footer>
         </div>
       </div>
     </>

@@ -367,7 +367,7 @@ app.use(authenticateToken);
 app.get("/dashboard", async (req, res) => {
   try {
     const roleNames = {
-      1: "Administrator",
+      1: "Supervising Officer",
       2: "Lead Investigator",
       3: "Forensic Officer",
       4: "Police Officer",

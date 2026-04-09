@@ -13,7 +13,7 @@ function LoginForm({ role, onBack }) {
   const titles = {
     police: "Police Officer",
     forensic: "Forensic Officer",
-    admin: "Administrator",
+    admin: "Supervising Officer",
     lead: "Lead Investigator",
   };
 
