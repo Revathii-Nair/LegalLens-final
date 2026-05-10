@@ -13,7 +13,6 @@ import NotificationsPage from "./pages/notifications/NotificationsPage.js";
 import UploadEvidencePage from "./pages/evidence/UploadEvidencePage.js";
 import "./App.css";
 
-// Redirect to login if not authenticated
 function ProtectedRoute({ children, allowedRoles }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
@@ -24,7 +23,6 @@ function ProtectedRoute({ children, allowedRoles }) {
   return children;
 }
 
-// Wrap pages with the sidebar layout
 function DashboardLayout({ children }) {
   return (
     <>
@@ -38,10 +36,8 @@ function App() {
   return (
     <div className="appContainer">
       <Routes>
-        {/* Public */}
         <Route path="/" element={<LoginContainer />} />
 
-        {/* All logged-in users */}
         <Route
           path="/dashboard"
           element={
@@ -103,7 +99,6 @@ function App() {
           }
         />
 
-        {/* Admin only */}
         <Route
           path="/create-case"
           element={
@@ -125,7 +120,6 @@ function App() {
           }
         />
 
-        {/* Admin + Lead Investigator */}
         <Route
           path="/audit-log"
           element={
@@ -137,7 +131,6 @@ function App() {
           }
         />
 
-        {/* Police Officer + Forensic Officer — Upload Evidence */}
         <Route
           path="/upload-evidence"
           element={
@@ -149,7 +142,6 @@ function App() {
           }
         />
 
-        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </div>
