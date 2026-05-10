@@ -7,7 +7,6 @@ const notificationSchema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now },
 });
 
-// Index for fast per-user queries
 notificationSchema.index({ user_id: 1, created_at: -1 });
 
 export default mongoose.model("Notification", notificationSchema, "Notifications");

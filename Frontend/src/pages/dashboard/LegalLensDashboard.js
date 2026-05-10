@@ -162,26 +162,17 @@ export default function LegalLensDashboard() {
               value={searchVal}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && searchVal.trim())
-                  navigate(`/cases?q=${encodeURIComponent(searchVal.trim())}`);
+                if (e.key === "Enter" && searchVal.trim()) navigate(`/cases?q=${encodeURIComponent(searchVal.trim())}`);
               }}
             />
           </div>
 
           {/* Notification bell */}
           <div ref={notifRef} className="notifContainer">
-            <button
-              className="notificationBtn"
-              onClick={() => setShowPanel((v) => !v)}
-              title="Notifications"
-            >
+            <button className="notificationBtn" onClick={() => setShowPanel((v) => !v)} title="Notifications">
               <Bell size={20} />
-              {unreadCount > 0 && (
-                <span className="badge notifBadgeRed">{unreadCount > 9 ? "9+" : unreadCount}</span>
-              )}
-              {unreadCount === 0 && notifications.length > 0 && (
-                <span className="badge notifBadgeGreen" />
-              )}
+              {unreadCount > 0 && <span className="badge notifBadgeRed">{unreadCount > 9 ? "9+" : unreadCount}</span>}
+              {unreadCount === 0 && notifications.length > 0 && <span className="badge notifBadgeGreen" />}
             </button>
 
             {showPanel && (
@@ -199,21 +190,14 @@ export default function LegalLensDashboard() {
                     <p className="noNotifsMsg">No notifications yet</p>
                   ) : (
                     notifications.slice(0, 10).map((n) => (
-                      <div
-                        key={n._id}
-                        className={`notifDropItem ${n.read ? "notifRead" : "notifUnread"}`}
-                      >
+                      <div key={n._id} className={`notifDropItem ${n.read ? "notifRead" : "notifUnread"}`}>
                         <div className={`notifDotIndicator ${n.read ? "dotGreen" : "dotRed"}`} />
                         <div className="notifDropContent">
                           <p className="notifDropText">{n.message}</p>
                           <span className="notifDropTime">{formatTime(n.created_at)}</span>
                         </div>
                         {!n.read && (
-                          <button
-                            className="notifReadBtn"
-                            onClick={() => handleMarkRead(n._id)}
-                            title="Mark as read"
-                          >
+                          <button className="notifReadBtn" onClick={() => handleMarkRead(n._id)} title="Mark as read">
                             <Check size={12} />
                           </button>
                         )}
@@ -238,11 +222,7 @@ export default function LegalLensDashboard() {
           {/* Avatar */}
           <div className="userAvatar" onClick={() => navigate("/profile")} title="View Profile">
             {user?.avatar ? (
-              <img
-                src={`http://localhost:5000${user.avatar}`}
-                alt="avatar"
-                className="userAvatarImg"
-              />
+              <img src={`http://localhost:5000${user.avatar}`} alt="avatar" className="userAvatarImg" />
             ) : (
               <span className="userAvatarFallback">{user?.name?.charAt(0)?.toUpperCase()}</span>
             )}
@@ -275,13 +255,7 @@ export default function LegalLensDashboard() {
               </div>
             ) : (
               recentCases.map((c) => (
-                <CaseRow
-                  key={c.caseId}
-                  id={c.caseId}
-                  title={c.title}
-                  priority={getPriorityLabel(c.priority)}
-                  status={c.status}
-                />
+                <CaseRow key={c.caseId} id={c.caseId} title={c.title} priority={getPriorityLabel(c.priority)} status={c.status} />
               ))
             )}
           </div>
@@ -304,13 +278,7 @@ export default function LegalLensDashboard() {
                 </div>
               ) : (
                 assignedCases.map((c) => (
-                  <CaseRow
-                    key={c.id || c.caseId}
-                    id={c.caseId}
-                    title={c.title}
-                    priority={getPriorityLabel(c.priority)}
-                    status={c.status}
-                  />
+                  <CaseRow key={c.id || c.caseId} id={c.caseId} title={c.title} priority={getPriorityLabel(c.priority)} status={c.status} />
                 ))
               )}
             </div>
@@ -381,10 +349,7 @@ export default function LegalLensDashboard() {
               ) : (
                 auditPreview.map((log) => (
                   <div key={log._id} className="auditPreviewItem">
-                    <div
-                      className="notifDotIndicator"
-                      style={{ backgroundColor: getActionColor(log.action) }}
-                    />
+                    <div className="notifDotIndicator" style={{ backgroundColor: getActionColor(log.action) }} />
                     <div className="auditPreviewContent">
                       <p className="auditPreviewAction">{log.action}</p>
                       <span className="auditPreviewMeta">

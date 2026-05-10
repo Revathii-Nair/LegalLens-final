@@ -1,21 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  UserPlus,
-  Trash2,
-  KeyRound,
-  Search,
-  X,
-  CheckCircle,
-  AlertCircle,
-  UserMinus,
-  FolderOpen,
-  MoreVertical,
-} from "lucide-react";
+import { UserPlus, Trash2, KeyRound, Search, X, CheckCircle, AlertCircle, UserMinus, FolderOpen, MoreVertical } from "lucide-react";
 import api from "../../api.js";
 import "../../components/Components.css";
 import "../dashboard/Dashboard.css";
 
-/* ─── Role colours ─── */
 const ROLE_COLORS = {
   Lead_Investigator: { color: "#34d399", bg: "rgba(52,211,153,0.1)" },
   Forensic_Officer: { color: "#fbbf24", bg: "rgba(251,191,36,0.1)" },
@@ -36,7 +24,6 @@ function buildEmail(name = "") {
   return slug ? `${slug}@gmail.com` : "";
 }
 
-/* ─── Three-dot action menu for one member row ─── */
 function MemberActions({ user, onAssign, onReset, onRemoveCases, onDelete }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -66,12 +53,7 @@ function MemberActions({ user, onAssign, onReset, onRemoveCases, onDelete }) {
 
   return (
     <div ref={ref} className="memberActionsWrap">
-      <button
-        type="button"
-        className="memberDotsBtn"
-        onClick={() => setOpen((v) => !v)}
-        title="Actions"
-      >
+      <button type="button" className="memberDotsBtn" onClick={() => setOpen((v) => !v)} title="Actions">
         <MoreVertical size={16} />
       </button>
 
@@ -79,9 +61,7 @@ function MemberActions({ user, onAssign, onReset, onRemoveCases, onDelete }) {
         <div className="memberActionsDropdown">
           {item(<FolderOpen size={15} />, "Assign to Case", "#60a5fa", () => onAssign(user))}
           {item(<KeyRound size={15} />, "Reset Password", "#fbbf24", () => onReset(user))}
-          {item(<UserMinus size={15} />, "Remove from All Cases", "#fb923c", () =>
-            onRemoveCases(user),
-          )}
+          {item(<UserMinus size={15} />, "Remove from All Cases", "#fb923c", () => onRemoveCases(user))}
           {item(<Trash2 size={15} />, "Delete from System", "#f87171", () => onDelete(user))}
         </div>
       )}
@@ -89,15 +69,12 @@ function MemberActions({ user, onAssign, onReset, onRemoveCases, onDelete }) {
   );
 }
 
-/* ─── Main component ─── */
 export default function MembersPage() {
   const [users, setUsers] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState({ type: "", text: "" });
-
-  /* Add member */
   const [showAdd, setShowAdd] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
@@ -107,13 +84,9 @@ export default function MembersPage() {
     password: DEFAULT_PASSWORD,
   });
   const [adding, setAdding] = useState(false);
-
-  /* Reset password modal */
   const [resetTarget, setResetTarget] = useState(null);
   const [newPassword, setNewPassword] = useState("");
   const [resetting, setResetting] = useState(false);
-
-  /* Assign to case modal */
   const [assignTarget, setAssignTarget] = useState(null);
   const [assigning, setAssigning] = useState(false);
   const [assignMsg, setAssignMsg] = useState({ type: "", text: "" });
@@ -164,19 +137,12 @@ export default function MembersPage() {
     }
     const q = search.toLowerCase();
     setFiltered(
-      users.filter(
-        (u) =>
-          u.name?.toLowerCase().includes(q) ||
-          u.email?.toLowerCase().includes(q) ||
-          u.role_id?.role_name?.toLowerCase().includes(q),
-      ),
+      users.filter((u) => u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q) || u.role_id?.role_name?.toLowerCase().includes(q)),
     );
   }, [search, users]);
 
-  /* ─ Handlers ─ */
   const handleAdd = async () => {
-    if (!newUser.name.trim() || !newUser.email.trim())
-      return flash("error", "Name and email are required");
+    if (!newUser.name.trim() || !newUser.email.trim()) return flash("error", "Name and email are required");
     setAdding(true);
     try {
       await api.post("/users/create", {
@@ -204,8 +170,7 @@ export default function MembersPage() {
   };
 
   const handleDelete = async (u) => {
-    if (!window.confirm(`Permanently delete "${u.name}" from the system? This cannot be undone.`))
-      return;
+    if (!window.confirm(`Permanently delete "${u.name}" from the system? This cannot be undone.`)) return;
     try {
       await api.delete(`/users/${u._id}`);
       flash("success", `"${u.name}" deleted from system`);
@@ -252,8 +217,7 @@ export default function MembersPage() {
   };
 
   const handleResetPassword = async () => {
-    if (!newPassword || newPassword.length < 6)
-      return flash("error", "Password must be at least 6 characters");
+    if (!newPassword || newPassword.length < 6) return flash("error", "Password must be at least 6 characters");
     setResetting(true);
     try {
       await api.post(`/users/${resetTarget._id}/reset-password`, { newPassword });
@@ -267,29 +231,20 @@ export default function MembersPage() {
     }
   };
 
-  const getRoleStyle = (name) =>
-    ROLE_COLORS[name] || { color: "#94a3b8", bg: "rgba(148,163,184,0.1)" };
+  const getRoleStyle = (name) => ROLE_COLORS[name] || { color: "#94a3b8", bg: "rgba(148,163,184,0.1)" };
 
-  /* ─── Render ─── */
   return (
     <div className="dashboardMain">
-      {/* Header */}
       <header className="dashboardHeader">
         <div className="headerBranding">
           <h1 className="logoText">
             <span>LEGALLENS</span> Members
           </h1>
           <p className="systemStatus">
-            Manage system users •{" "}
-            <span className="highlightText">{users.length} total members</span>
+            Manage system users • <span className="highlightText">{users.length} total members</span>
           </p>
         </div>
-        <button
-          type="button"
-          className="primaryActionBtn"
-          style={{ width: "auto", padding: "0.75rem 1.5rem" }}
-          onClick={() => setShowAdd((v) => !v)}
-        >
+        <button type="button" className="primaryActionBtn" style={{ width: "auto", padding: "0.75rem 1.5rem" }} onClick={() => setShowAdd((v) => !v)}>
           {showAdd ? (
             <>
               <X size={16} /> Cancel
@@ -302,7 +257,6 @@ export default function MembersPage() {
         </button>
       </header>
 
-      {/* Alert banner */}
       {msg.text && (
         <div
           className={`alertBanner ${msg.type === "success" ? "alertSuccess" : "alertError"}`}
@@ -313,7 +267,6 @@ export default function MembersPage() {
         </div>
       )}
 
-      {/* Add Member form */}
       {showAdd && (
         <div className="formSectionCard" style={{ marginBottom: "1.5rem" }}>
           <div className="sectionHeader">
@@ -388,8 +341,7 @@ export default function MembersPage() {
             </div>
             <div className="inputGroup" style={{ gridColumn: "span 2" }}>
               <label>
-                Temporary Password{" "}
-                <span style={{ color: "#475569", fontWeight: 400 }}>(default: pass123)</span>
+                Temporary Password <span style={{ color: "#475569", fontWeight: 400 }}>(default: pass123)</span>
               </label>
               <input
                 type="text"
@@ -424,7 +376,6 @@ export default function MembersPage() {
         </div>
       )}
 
-      {/* Members table */}
       <div className="formSectionCard">
         <div className="sectionHeader">
           <div className="indicatorDot" />
@@ -479,8 +430,7 @@ export default function MembersPage() {
             {loading ? (
               <tr>
                 <td colSpan={5} style={{ textAlign: "center", padding: "3rem", color: "#475569" }}>
-                  <div className="miniSpinner" style={{ margin: "0 auto 0.75rem" }} /> Loading
-                  members...
+                  <div className="miniSpinner" style={{ margin: "0 auto 0.75rem" }} /> Loading members...
                 </td>
               </tr>
             ) : filtered.length === 0 ? (
@@ -545,7 +495,6 @@ export default function MembersPage() {
         </table>
       </div>
 
-      {/* ── Assign to Case Modal ── */}
       {assignTarget && (
         <div className="modalOverlay" onClick={() => setAssignTarget(null)}>
           <div className="modalBox" style={{ maxWidth: 500 }} onClick={(e) => e.stopPropagation()}>
@@ -561,11 +510,7 @@ export default function MembersPage() {
             <div className="modalBody">
               <div className="modalField">
                 <label>Select Case</label>
-                <select
-                  className="modalInput"
-                  value={selectedCase}
-                  onChange={(e) => setSelectedCase(e.target.value)}
-                >
+                <select className="modalInput" value={selectedCase} onChange={(e) => setSelectedCase(e.target.value)}>
                   <option value="">— Choose a case —</option>
                   {caseList.map((c) => (
                     <option key={c._id || c.case_id} value={c.case_id}>
@@ -575,11 +520,7 @@ export default function MembersPage() {
                 </select>
               </div>
               {assignMsg.text && (
-                <div
-                  className={`alertBanner ${assignMsg.type === "success" ? "alertSuccess" : "alertError"}`}
-                >
-                  {assignMsg.text}
-                </div>
+                <div className={`alertBanner ${assignMsg.type === "success" ? "alertSuccess" : "alertError"}`}>{assignMsg.text}</div>
               )}
             </div>
             <div className="modalFooter">
@@ -591,12 +532,7 @@ export default function MembersPage() {
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                className="btnCreate"
-                onClick={handleAssignCase}
-                disabled={assigning}
-              >
+              <button type="button" className="btnCreate" onClick={handleAssignCase} disabled={assigning}>
                 {assigning ? "Assigning..." : "Assign to Case"}
               </button>
             </div>
@@ -604,7 +540,6 @@ export default function MembersPage() {
         </div>
       )}
 
-      {/* ── Reset Password Modal ── */}
       {resetTarget && (
         <div
           className="modalOverlay"
@@ -617,9 +552,7 @@ export default function MembersPage() {
             <div className="modalHeader">
               <div>
                 <h2 className="modalTitle">Reset Password</h2>
-                <p className="modalSubtitle">
-                  For {resetTarget.name} — they'll be notified via the app
-                </p>
+                <p className="modalSubtitle">For {resetTarget.name} — they'll be notified via the app</p>
               </div>
               <button
                 type="button"
@@ -635,8 +568,7 @@ export default function MembersPage() {
             <div className="modalBody">
               <div className="modalField">
                 <label>
-                  New Password{" "}
-                  <span style={{ color: "#475569", fontWeight: 400 }}>(min 6 characters)</span>
+                  New Password <span style={{ color: "#475569", fontWeight: 400 }}>(min 6 characters)</span>
                 </label>
                 <input
                   className="modalInput"
@@ -660,12 +592,7 @@ export default function MembersPage() {
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                className="btnCreate"
-                onClick={handleResetPassword}
-                disabled={resetting}
-              >
+              <button type="button" className="btnCreate" onClick={handleResetPassword} disabled={resetting}>
                 {resetting ? (
                   "Resetting..."
                 ) : (
